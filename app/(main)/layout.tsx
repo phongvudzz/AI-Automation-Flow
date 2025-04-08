@@ -25,7 +25,7 @@ export default function LayoutMainScreen({
           <BreadcrumbHeader />
         </header>
         <Separator />
-        <main className="overflow-auto flex-1 text-accent-foreground px-6 py-4">
+        <main className="overflow-hidden flex-1 text-accent-foreground px-6 py-4">
           {children}
         </main>
       </div>

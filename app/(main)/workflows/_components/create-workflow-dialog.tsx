@@ -1,15 +1,11 @@
 "use client";
-
-import React, { useCallback, useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { CreateWorkflowSchema } from "@/schema/workflow";
+import { Layers2Icon, Loader2 } from "lucide-react";
+import React, { useCallback, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateWorkflowSchema } from "@/schema/workflow";
-import CustomizeDialogHeader from "@/components/global/customize-dialog-header";
-import { Layers2Icon, Loader2 } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -18,48 +14,51 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
-import { CreateWorkflow } from "@/actions/workflows/create-workflow";
 import { toast } from "sonner";
+import { CreateWorkflow } from "@/actions/workflows/create-workflow";
+import CustomizeDialogHeader from "@/components/global/customize-dialog-header";
+import { useRouter } from "next/navigation";
 
 type CreateWorkflowDialogProps = {
   triggerText?: string;
 };
 
 function CreateWorkflowDialog({ triggerText }: CreateWorkflowDialogProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const form = useForm<CreateWorkflowSchema>({
     resolver: zodResolver(CreateWorkflowSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-    },
+    defaultValues: {},
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending: isMutationPending } = useMutation({
     mutationFn: CreateWorkflow,
-    onSuccess: () => {
-      toast.success("Workflow created successfully.", {
-        id: "create-workflow-toast",
+    onSuccess: (data) => {
+      toast.success("Workflow created successfully", {
+        id: "create-workflow",
       });
-      setOpen(false);
-      form.reset();
+      startTransition(() => {
+        router.replace(data.redirect);
+      });
     },
-    onError: () => {
-      toast.error("Workflow created failed.", {
-        id: "create-workflow-toast",
+    onError() {
+      toast.error("Failed to create workflow", {
+        id: "create-workflow",
       });
     },
   });
 
   const onSubmit = useCallback(
-    (values: CreateWorkflowSchema) => {
-      mutate(values);
+    async (values: CreateWorkflowSchema) => {
       toast.loading("Creating workflow...", {
-        id: "create-workflow-toast",
+        id: "create-workflow",
       });
+      mutate(values);
     },
     [mutate]
   );
@@ -68,17 +67,17 @@ function CreateWorkflowDialog({ triggerText }: CreateWorkflowDialogProps) {
     <Dialog
       open={open}
       onOpenChange={(open) => {
-        setOpen(open);
         form.reset();
+        setOpen(open);
       }}
     >
       <DialogTrigger asChild>
-        <Button>{triggerText || "Create Workflow"}</Button>
+        <Button>{triggerText ?? "Create workflow"}</Button>
       </DialogTrigger>
       <DialogContent className="px-0">
         <CustomizeDialogHeader
           icon={Layers2Icon}
-          title="Create Workflow"
+          title="Create workflow"
           subTitle="Start building your workflow"
         />
         <div className="p-6">
@@ -94,17 +93,18 @@ function CreateWorkflowDialog({ triggerText }: CreateWorkflowDialogProps) {
                   <FormItem>
                     <FormLabel className="flex gap-1 items-center">
                       Name
-                      <p className="text-xs text-destructive">(required)</p>
+                      <p className="text-xs text-primary">(required)</p>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter name" />
+                      <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Choose a descriptive and unique name for your workflow.
+                      Choose a desciptive and unique name for your workflow
                     </FormDescription>
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="description"
@@ -115,11 +115,7 @@ function CreateWorkflowDialog({ triggerText }: CreateWorkflowDialogProps) {
                       <p className="text-xs text-primary">(optional)</p>
                     </FormLabel>
                     <FormControl>
-                      <Textarea
-                        {...field}
-                        className="resize-none"
-                        placeholder="Enter description"
-                      />
+                      <Textarea {...field} className="resize-none" />
                     </FormControl>
                     <FormDescription>
                       Provide a brief description of what your workflow does.
@@ -130,9 +126,9 @@ function CreateWorkflowDialog({ triggerText }: CreateWorkflowDialogProps) {
                 )}
               />
               <Button
+                className="w-full"
                 type="submit"
-                disabled={isPending}
-                className="w-full cursor-pointer"
+                disabled={isPending || isMutationPending}
               >
                 {!isPending && "Proceed"}{" "}
                 {isPending && <Loader2 className="animate-spin" />}
