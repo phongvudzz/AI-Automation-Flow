@@ -13,22 +13,104 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        String  @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  String?
+model Workflow {
+  id          String @id @default(uuid())
+  userId      String
+  name        String
+  description String?
+
+  definition    String  @default("{}")
+  executionPlan String?
+  creditsCost   Int     @default(0)
+
+  status String @default("draft")
+
+  lastRunAt     DateTime?
+  lastRunId     String?
+  lastRunStatus String?
+  nextRunAt     DateTime?
+
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  executions WorkflowExecution[]
+
+  @@unique([name, userId])
 }
 
-model User {
-  id        String   @id @default(cuid())
-  name      String?
-  email     String?  @unique
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @updatedAt @map(name: "updated_at")
-  posts     Post[]
+model WorkflowExecution {
+  id         String @id @default(uuid())
+  workflowId String
+  userId     String
+  trigger    String
+  status     String
 
-  @@map(name: "users")
+  creditsConsumed Int @default(0)
+
+  startedAt   DateTime?
+  completedAt DateTime?
+  definition  String    @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  phases ExecutionPhase[]
+
+  Workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+}
+
+model ExecutionPhase {
+  id     String @id @default(uuid())
+  userId String
+  status String
+  number Int
+  node   String
+  name   String
+
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  inputs  String?
+  outputs String?
+
+  creditsConsumed     Int               @default(0)
+  workflowExecutionId String
+  execution           WorkflowExecution @relation(fields: [workflowExecutionId], references: [id], onDelete: Cascade)
+
+  logs ExecutionLog[]
+}
+
+model ExecutionLog {
+  id        String   @id @default(uuid())
+  logLevel  String
+  message   String
+  timestamp DateTime @default(now())
+
+  executionPhaseId String
+  executionPhase   ExecutionPhase @relation(fields: [executionPhaseId], references: [id], onDelete: Cascade)
+}
+
+model UserBalance {
+  userId  String @id
+  credits Int    @default(0)
+}
+
+model Credential {
+  id     String @id @default(uuid())
+  userId String
+  name   String
+  value  String
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, name])
+}
+
+model UserPurchase {
+  id          String   @id @default(uuid())
+  userId      String
+  stripeId    String
+  description String
+  amount      Int
+  currency    String
+  date        DateTime @default(now())
 }

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "../ui/separator";
 
-export const BreadscrumbHeader = () => {
+export const BreadcrumbHeader = () => {
   const pathName = usePathname();
 
   const paths = pathName === "/dashboard" ? [""] : pathName.split("/");

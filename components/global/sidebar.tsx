@@ -112,7 +112,10 @@ function DesktopSidebar({ open }: DesktopSidebarProps) {
       </SidebarContent>
       <SidebarFooter className="p-2 flex justify-center items-center">
         <SignedIn>
-          <UserButton showName={open} />
+          <UserButton
+            showName={open}
+            appearance={{ elements: { userButtonBox: "dark:text-muted-foreground duration-300" } }}
+          />
         </SignedIn>
       </SidebarFooter>
     </Sidebar>

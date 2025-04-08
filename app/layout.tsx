@@ -2,12 +2,13 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { fontVariables } from "@/lib/fonts";
+import { Toaster } from "sonner";
 
-import { ThemeProvider } from "@/providers/theme-provider";
 import { ClerkProviderWrapper } from "@/providers/clerk-provider";
+import { AppProviders } from "@/providers/app-providers";
 
 export const metadata: Metadata = {
-  title: "AI Automation Flow",
+  title: "Flowtylixs",
   description:
     "A designed for AI Automation, analytics, and data science projects.",
 };
@@ -25,14 +26,15 @@ export default function RootLayout({
           data-new-gr-c-s-check-loaded="14.1229.0"
           data-gr-ext-installed=""
         >
-          <ThemeProvider
+          <AppProviders
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
             {children}
-          </ThemeProvider>
+          </AppProviders>
+          <Toaster richColors />
         </body>
       </html>
     </ClerkProviderWrapper>
