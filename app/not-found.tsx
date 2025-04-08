@@ -17,7 +17,7 @@ function NotFound() {
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link
-            href="/"
+            href="/dashboard"
             className={buttonVariants({
               variant: "sidebarActiveItem",
             })}

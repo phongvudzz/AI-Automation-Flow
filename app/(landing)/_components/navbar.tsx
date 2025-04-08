@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronRight, Menu, X, Moon, Sun } from "lucide-react";
 import { motion } from "motion/react";
 import { UserButton, useUser } from "@clerk/nextjs";
-import { APP_NAME } from "@/config/site";
+import Logo from "@/components/global/logo";
 
 export const Navbar = () => {
   const { user } = useUser();
@@ -41,12 +41,7 @@ export const Navbar = () => {
       }`}
     >
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2 font-bold">
-          <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground">
-            AI
-          </div>
-          <span>{APP_NAME}</span>
-        </div>
+        <Logo isLanding />
         <nav className="hidden md:flex gap-8">
           <Link
             href="#features"
