@@ -6,11 +6,18 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
 export function SwitchTheme() {
+  const [mounted, setMounted] = React.useState(false);
   const { theme, setTheme } = useTheme();
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <Button

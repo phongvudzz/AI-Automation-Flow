@@ -10,7 +10,7 @@ function Logo({
 }) {
   return (
     <Link
-      href={`${isLanding ? "/" : "dashboard"}`}
+      href={`${isLanding ? "/" : "/dashboard"}`}
       className="inline-flex items-center gap-2 font-bold"
     >
       <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground">

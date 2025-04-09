@@ -38,12 +38,12 @@ function CreateWorkflowDialog({ triggerText }: CreateWorkflowDialogProps) {
 
   const { mutate, isPending: isMutationPending } = useMutation({
     mutationFn: CreateWorkflow,
-    onSuccess: (data) => {
+    onSuccess: ({ workflowId }) => {
       toast.success("Workflow created successfully", {
         id: "create-workflow",
       });
       startTransition(() => {
-        router.replace(data.redirect);
+        router.replace(`/workflow/editor/${workflowId}`);
       });
     },
     onError() {
@@ -99,7 +99,7 @@ function CreateWorkflowDialog({ triggerText }: CreateWorkflowDialogProps) {
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Choose a desciptive and unique name for your workflow
+                      Choose a descriptive and unique name for your workflow
                     </FormDescription>
                   </FormItem>
                 )}

@@ -9,7 +9,6 @@ import { Workflow } from "@prisma/client";
 export async function CreateWorkflow(form: CreateWorkflowSchema) {
   const { success, data } = CreateWorkflowSchema.safeParse(form);
 
-  console.log("🚀 ~ CreateWorkflow ~ success:", success);
   if (!success) throw new Error("Invalid form data");
 
   const { userId } = await auth();
@@ -30,8 +29,8 @@ export async function CreateWorkflow(form: CreateWorkflowSchema) {
     });
   } catch (error) {
     console.error("Failed to create workflow:", error);
-    throw error; // Or handle it differently
+    throw error;
   }
 
-  return { redirect: `/workflow/editor/${workflow.id}` };
+  return { workflowId: workflow.id };
 }

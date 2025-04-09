@@ -1,15 +1,14 @@
 import Link from "next/link";
-import { useTheme } from "next-themes";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Menu, X, Moon, Sun } from "lucide-react";
+import { ChevronRight, Menu, X } from "lucide-react";
 import { motion } from "motion/react";
 import { UserButton, useUser } from "@clerk/nextjs";
 import Logo from "@/components/global/logo";
+import { SwitchTheme } from "@/components/global/switch-theme";
 
 export const Navbar = () => {
   const { user } = useUser();
-  const { theme, setTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -25,10 +24,6 @@ export const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
 
   const onCloseMenu = () => {
     setMobileMenuOpen(false);
@@ -69,19 +64,7 @@ export const Navbar = () => {
           </Link>
         </nav>
         <div className="hidden md:flex gap-4 items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            className="rounded-full"
-          >
-            {theme === "dark" ? (
-              <Sun className="size-[18px]" />
-            ) : (
-              <Moon className="size-[18px]" />
-            )}
-            <span className="sr-only">Toggle theme</span>
-          </Button>
+          <SwitchTheme />
           <Button asChild className="rounded-full">
             <Link href="/dashboard">
               {user ? "Dashboard" : "Get Started"}
@@ -91,18 +74,7 @@ export const Navbar = () => {
           {user ? <UserButton /> : null}
         </div>
         <div className="flex items-center gap-4 md:hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            className="rounded-full"
-          >
-            {theme === "dark" ? (
-              <Sun className="size-[18px]" />
-            ) : (
-              <Moon className="size-[18px]" />
-            )}
-          </Button>
+          <SwitchTheme />
           <Button
             variant="ghost"
             size="icon"
@@ -117,7 +89,6 @@ export const Navbar = () => {
           </Button>
         </div>
       </div>
-      {/* Mobile menu */}
       {mobileMenuOpen && <MobileMenu onCloseMenu={onCloseMenu} />}
     </header>
   );
