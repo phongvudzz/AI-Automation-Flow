@@ -2,8 +2,10 @@ import React from "react";
 
 import prisma from "@/lib/prisma";
 
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
+
+import Editor from "@/app/workflow/_components/editor";
 
 async function WorkflowIdPage({ params }: { params: { workflowId: string } }) {
   const { workflowId } = params;
@@ -24,7 +26,7 @@ async function WorkflowIdPage({ params }: { params: { workflowId: string } }) {
     throw new Error("Workflow not found");
   }
 
-  return <div>WorkflowIdPage</div>;
+  return <Editor workflow={workflow} />;
 }
 
 export default WorkflowIdPage;
